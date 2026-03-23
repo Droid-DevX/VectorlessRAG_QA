@@ -12,6 +12,7 @@ from rag_engine import (
     extract_pages_from_txt,
     build_context,
 )
+api_key = st.secrets["GROQ_API_KEY"]
 
 st.set_page_config(
     page_title="RAG · Semantic Search",
