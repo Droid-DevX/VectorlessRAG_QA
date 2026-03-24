@@ -1,8 +1,8 @@
-# Vectorless RAG, Semantic Document Search
+# Vectorless RAG, Semantic Document Search |   **[Try Live Demo](https://droid-devx-vectorlessrag-qa-app-8eprz4.streamlit.app/)**
 Real-time pipeline for retrieving and analyzing documents using a Custom BM25 Page-Index retrieval engine in Python — with automated text chunking, TF-IDF ranking, and a high-speed LLaMA generation fallback (Groq).
 
  ![Demo](ss.png)
- **[-----------------------------------Checkout the Project----------------------------------](https://droid-devx-vectorlessrag-qa-app-8eprz4.streamlit.app/)**
+
 
 ## Results at a Glance
 | | Vectorless (BM25) | Vector DB (Embeddings) |
