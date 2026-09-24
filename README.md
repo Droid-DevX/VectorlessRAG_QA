@@ -1,30 +1,87 @@
 # Vectorless RAG - Semantic Document Search
 
-A full-stack, **vector-database-free RAG system** for uploading
-documents, retrieving relevant evidence, and generating grounded
-answers.
+<p align="center">
+  <img src="assets/demo.png" alt="Vectorless RAG Demo" width="90%">
+</p>
 
-The project uses a custom **BM25 retrieval engine** instead of
-embeddings/vector storage. Documents are extracted into page- and
-section-aware chunks, indexed locally, and retrieved using lexical
-relevance with deterministic query/section routing. A Groq-hosted LLM
-then generates the final answer strictly from the retrieved evidence.
+<p align="center">
+  <a href="https://vectorless-rag-qa-gamma.vercel.app/">
+    <img src="https://img.shields.io/badge/%20Try%20Live%20Demo-Vectorless%20RAG-black?style=for-the-badge" alt="Try Live Demo">
+  </a>
+</p>
 
-##  Features
+<p align="center">
+  A full-stack <b>vector-database-free RAG system</b> for document search,
+  evidence retrieval, and grounded question answering.
+</p>
 
--   PDF and TXT document upload
--   Custom BM25 inverted-index retrieval
--   Page-aware and section-aware chunking
--   Query intent routing for Technical Skills, Work Experience,
-    Projects, Publications, Education, Certifications, and Achievements
+---
 
--   Source/page/section citations
--   Fast local retrieval without a vector database
--   React + TypeScript frontend
--   FastAPI backend
--   Clear/reset indexed documents
--   Live index statistics
+## Overview
 
+**Vectorless RAG** is a full-stack Retrieval-Augmented Generation (RAG)
+system designed to perform document search and question answering
+**without using embeddings or a vector database**.
+
+The system uses a custom **BM25 retrieval engine** instead of vector
+similarity search. Documents are extracted into page- and section-aware
+chunks, indexed locally, and retrieved using lexical relevance with
+deterministic query and section routing.
+
+A Groq-hosted LLM then generates the final answer strictly from the
+retrieved evidence, with source citations.
+
+##  Try It Live
+
+**[- Open Vectorless RAG](https://vectorless-rag-qa-gamma.vercel.app/)**
+
+Upload a PDF, ask questions about the document, and get grounded answers
+based on the retrieved evidence.
+
+### Key Features
+
+- **No vector database**
+-  Custom **BM25 lexical retrieval**
+-  PDF document indexing
+-  Page- and section-aware chunking
+-  Deterministic query/section routing
+-  Section-aware reranking
+-  Groq-powered answer generation
+-  Grounded answers with source citations
+-  React + Vite frontend
+-  FastAPI backend
+-  Deployed using Vercel + Render
+
+## Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │    React + Vite     │
+                    │     Frontend        │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │       FastAPI       │
+                    │       Backend       │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    RAG Engine       │
+                    │                     │
+                    │ PDF → Chunks        │
+                    │      ↓              │
+                    │ BM25 Retrieval      │
+                    │      ↓              │
+                    │ Section Reranking   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │        Groq         │
+                    │    LLM Generation   │
+                    └─────────────────────┘
 ##  Architecture
 
 ``` text
