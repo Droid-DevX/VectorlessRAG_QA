@@ -21,10 +21,25 @@ from groq_rag import ask_documents
 
 app = FastAPI(title="Vectorless RAG API", version="1.0.0")
 
-# React dev server (Vite) typically runs on localhost:5173.
+
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Production frontend URL from environment variable
+frontend_url = os.getenv("FRONTEND_URL", "").strip()
+
+if frontend_url:
+    allowed_origins.extend(
+        origin.strip()
+        for origin in frontend_url.split(",")
+        if origin.strip()
+    )
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=list(dict.fromkeys(allowed_origins)),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

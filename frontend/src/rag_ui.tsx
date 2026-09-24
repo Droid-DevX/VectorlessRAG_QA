@@ -9,8 +9,8 @@ import React, { useEffect, useRef, useState } from "react";
  *   POST   /api/query   { query }    -> { answer, results: SearchResult[] }
  *   POST   /api/clear                -> {}
  */
-
-const API_BASE = "/api";
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 
 interface Stats {
   total_pages: number;
