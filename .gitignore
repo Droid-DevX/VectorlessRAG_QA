@@ -1,29 +1,68 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # Virtual environments
-venv/
 .venv/
-ENV/
+venv/
 env/
+ENV/
+backend/.venv/
+backend/venv/
 
-# Environment Variables
+# Secrets / environment
 .env
-.env.local
+.env.*
+!.env.example
 
-# Streamlit config (if you have secrets)
-# .streamlit/secrets.toml
+# Node / React / Vite
+node_modules/
+frontend/node_modules/
+frontend/.vite/
+frontend/dist/
+dist/
+*.tsbuildinfo
 
-# OS generated files
+# Streamlit legacy files
+.streamlit/secrets.toml
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-*.toml
+desktop.ini
+
+# Logs / temporary files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# Local data / generated artifacts
+uploads/
+documents/
+data/
+models/
+artifacts/
+*.pkl
+*.pickle
+*.joblib
+
+# Python packaging
+build/
+*.egg-info/
+.eggs/
+
+# Test / coverage output
+test_output/
+coverage.xml
