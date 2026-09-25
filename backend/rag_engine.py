@@ -22,9 +22,9 @@ from collections import Counter, defaultdict
 from typing import Dict, List, Optional, Tuple
 
 
-# ---------------------------------------------------------------------------
+
 # Extraction
-# ---------------------------------------------------------------------------
+
 
 def clean_text(text: str) -> str:
     text = text.replace("\x00", " ")
@@ -62,9 +62,9 @@ def extract_pages_from_txt(file_bytes: bytes, chars_per_page: int = 2000) -> Lis
     return pages
 
 
-# ---------------------------------------------------------------------------
+
 # Tokenisation
-# ---------------------------------------------------------------------------
+
 
 STOP_WORDS = {
     "a","an","and","are","as","at","be","by","for","from","has","he","her",
@@ -111,9 +111,9 @@ def tokenise(text: str) -> List[str]:
     return result
 
 
-# ---------------------------------------------------------------------------
+
 # Section detection
-# ---------------------------------------------------------------------------
+
 
 SECTION_ALIASES = {
     "Technical Skills": {"technical skills", "skills", "technical skill"},
@@ -271,9 +271,9 @@ def chunk_page_sections(text: str, target_chars: int = 1200,
     return output
 
 
-# ---------------------------------------------------------------------------
+
 # Intent routing
-# ---------------------------------------------------------------------------
+
 
 INTENT_TERMS = {
     "Education": [
@@ -350,9 +350,9 @@ def detect_intent(query: str) -> str:
     return best or "General"
 
 
-# ---------------------------------------------------------------------------
+
 # BM25 index
-# ---------------------------------------------------------------------------
+
 
 class PageIndex:
     def __init__(self, k1: float = 1.5, b: float = 0.75,
@@ -658,9 +658,9 @@ class PageIndex:
         return idx
 
 
-# ---------------------------------------------------------------------------
+
 # Context
-# ---------------------------------------------------------------------------
+
 
 def build_context(results: List[Dict], max_chars: int = 6000,
                   include_scores: bool = False) -> str:
