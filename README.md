@@ -52,74 +52,72 @@ based on the retrieved evidence.
 -  FastAPI backend
 -  Deployed using Vercel + Render
 
-## Architecture
-
-```text
-                    ┌─────────────────────┐
-                    │    React + Vite     │
-                    │     Frontend        │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │       FastAPI       │
-                    │       Backend       │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │    RAG Engine       │
-                    │                     │
-                    │ PDF → Chunks        │
-                    │      ↓              │
-                    │ BM25 Retrieval      │
-                    │      ↓              │
-                    │ Section Reranking   │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │        Groq         │
-                    │    LLM Generation   │
-                    └─────────────────────┘
 ##  Architecture
 
-``` text
-React + TypeScript UI
-        │ REST API
-        ▼
-FastAPI
-        │
-        ▼
-rag_engine.py
-PDF/TXT extraction
-→ section detection + chunking
-→ tokenization
-→ inverted index
-→ BM25 retrieval
-→ section-aware reranking
-        │
-        ▼
-groq_rag.py
-retrieved context → Groq LLM → grounded answer + citation
+```mermaid
+flowchart TD
+    subgraph Client[" Frontend Client (React + Vite + TypeScript)"]
+        UI["Modern UI / Upload & Chat Interface"]
+        Viewer["Evidence Viewer & Citation Inspector"]
+    end
+
+    subgraph Backend["Backend API (FastAPI)"]
+        API["FastAPI REST Controller"]
+        Endpoints["Endpoints:<br/><code>/api/upload</code> · <code>/api/query</code> · <code>/api/stats</code> · <code>/api/clear</code>"]
+    end
+
+    subgraph Ingestion["Document Ingestion & Indexing Pipeline"]
+        EXT["Document Extraction<br/>(PyPDF / TXT)"]
+        SEC["Section Detection & Header Boundary Analysis"]
+        CHUNK["Page & Section-Aware Chunking"]
+        TOK["Lexical Tokenization & Normalization"]
+        INDEX[("Local Inverted Index<br/>(Term Frequencies & Document Lengths)")]
+    end
+
+    subgraph Retrieval[" Vectorless Retrieval Engine (BM25)"]
+        INTENT["Query Intent Classifier & Section Router"]
+        BM25["BM25 Lexical Retrieval Engine<br/><code>k1 = 1.5, b = 0.75</code>"]
+        RERANK["Section-Aware Reranking & Score Booster"]
+        TOPK["Top Evidence Chunks Extractor"]
+    end
+
+    subgraph Generation[" LLM Generation & Citation Validation"]
+        PROMPT["Strict Grounded Prompt Construction"]
+        GROQ["Groq LLM Inference API"]
+        VAL["Citation & Grounding Validator"]
+    end
+
+    %% Interactions
+    UI -->|"Upload Document (PDF/TXT)"| API
+    UI -->|"Submit Question"| API
+    API --- Endpoints
+
+    Endpoints -->|"Document Bytes"| EXT
+    EXT --> SEC --> CHUNK --> TOK --> INDEX
+
+    Endpoints -->|"Query String"| INTENT
+    INTENT --> BM25
+    INDEX -.->|"Index Lookup"| BM25
+    BM25 --> RERANK
+    RERANK --> TOPK
+
+    TOPK -->|"Retrieved Context Chunks"| PROMPT
+    PROMPT --> GROQ
+    GROQ --> VAL
+    VAL -->|"Grounded Answer + Citations"| API
+    API -->|"JSON Response"| Viewer
 ```
 
-### Core pipeline
+###  Core Query & Retrieval Pipeline
 
-``` text
-User Query
-    ↓
-Query Intent Detection
-    ↓
-BM25 Candidate Retrieval
-    ↓
-Section-aware Reranking
-    ↓
-Top Evidence Chunks
-    ↓
-Grounded LLM Generation
-    ↓
-Answer + Source/Page/Section Citation
+```mermaid
+flowchart LR
+    Q(["User Query"]) --> ID["1. Intent Detection<br/>& Section Routing"]
+    ID --> BM["2. BM25 Lexical<br/>Candidate Search"]
+    BM --> RR["3. Section-Aware<br/>Reranking"]
+    RR --> EV["4. Top Evidence<br/>Chunks Extraction"]
+    EV --> LLM["5. Grounded LLM<br/>Generation (Groq)"]
+    LLM --> ANS([" Verified Answer<br/>+ Source Citations"])
 ```
 
 ##  Project Structure
@@ -385,36 +383,24 @@ Tell me what you analyzed from the PDF.
 
 ##  Why Vectorless?
 
-Traditional RAG commonly follows:
+```mermaid
+flowchart LR
+    subgraph Trad[" Traditional Vector RAG"]
+        direction TB
+        TD1[" Raw Document"] --> TD2["Dense Embedding Model<br/>(OpenAI / HuggingFace)"]
+        TD2 --> TD3[("Vector Database<br/>(Pinecone / Chroma / FAISS)")]
+        TD3 --> TD4["Cosine Similarity Search<br/>(Approximate Nearest Neighbor)"]
+        TD4 --> TD5["LLM Generation"]
+    end
 
-``` text
-Document
-   ↓
-Embeddings
-   ↓
-Vector Database
-   ↓
-Similarity Search
-   ↓
-LLM
-```
-
-This project follows:
-
-``` text
-Document
-   ↓
-Text Extraction
-   ↓
-Tokenization
-   ↓
-Inverted Index
-   ↓
-BM25
-   ↓
-Section-aware Reranking
-   ↓
-LLM
+    subgraph VLess[" Vectorless RAG (This Project)"]
+        direction TB
+        VD1[" Raw Document"] --> VD2["Page & Section Extraction<br/>(PyPDF / TXT)"]
+        VD2 --> VD3["Lexical Tokenization<br/>& Normalization"]
+        VD3 --> VD4[("Local Inverted Index<br/>(Term Frequency & Document Length)")]
+        VD4 --> VD5["BM25 Lexical Retrieval<br/>+ Section Intent Reranking"]
+        VD5 --> VD6["Grounded LLM Generation<br/>(Groq + Verified Citations)"]
+    end
 ```
 
 ### Advantages
